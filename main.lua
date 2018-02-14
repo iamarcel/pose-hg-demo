@@ -1,4 +1,6 @@
 require 'paths'
+local inspect = require('inspect')
+json = require "json"
 paths.dofile('util.lua')
 paths.dofile('img.lua')
 
@@ -28,9 +30,10 @@ end
 m = torch.load('umich-stacked-hourglass.t7')   -- Load pre-trained model
 
 if arg[1] == 'demo' then
-    idxs = torch.Tensor({695, 3611, 2486, 7424, 10032, 5, 4829})
+    idxs = torch.Tensor({695})
     -- If all the MPII images are available, use the following line to see a random sampling of images
     -- idxs = torch.randperm(a.nsamples):sub(1,10)
+    images = {'316', '049', '050', '051', '052', '053', '054'}
 else
     idxs = torch.range(1,a.nsamples)
 end
@@ -38,7 +41,7 @@ end
 if arg[1] == 'eval' then
     nsamples = 0
 else
-    nsamples = idxs:nElement() 
+    nsamples = idxs:nElement()
     -- Displays a convenient progress bar
     xlua.progress(0,nsamples)
     preds = torch.Tensor(nsamples,16,2)
@@ -50,9 +53,14 @@ end
 
 for i = 1,nsamples do
     -- Set up input image
-    local im = image.load('images/' .. a['images'][idxs[i]])
-    local center = a['center'][idxs[i]]
-    local scale = a['scale'][idxs[i]]
+    -- local im = image.load('images/' .. a['images'][idxs[i]])
+    -- local center = a['center'][idxs[i]]
+    -- local scale = a['scale'][idxs[i]]
+    -- local inp = crop(im, center, scale, 0, 256)
+    local im = image.load('images/Image-' .. images[i] .. '.jpg')
+    local scale = 4.5
+    -- local center = {759, 346}
+    local center = {568, 596}
     local inp = crop(im, center, scale, 0, 256)
 
     -- Get network output
@@ -67,6 +75,8 @@ for i = 1,nsamples do
 
     xlua.progress(i,nsamples)
 
+    print(preds_img[1])
+
     -- Display the result
     if arg[1] == 'demo' then
         preds_hm:mul(4) -- Change to input scale
@@ -77,6 +87,8 @@ for i = 1,nsamples do
 
     collectgarbage()
 end
+
+print(inspect(preds))
 
 -- Save predictions
 if arg[1] == 'predict-valid' then
