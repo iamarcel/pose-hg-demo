@@ -1,0 +1,17 @@
+{
+    "image_root": "images/",
+    "image_extension": ".jpg",
+    "clips": [
+        {
+            "id": "Image",
+            "source": "https://youtube.com/abcde",
+            "start_frame": 1,
+            "end_frame": 30,
+            "scale": 4.5,
+            "center": [568, 596],
+            "points_2d": [],
+            "points_3d": [],
+            "subtitles": ""
+        }
+    ]
+}
