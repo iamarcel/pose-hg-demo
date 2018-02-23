@@ -16,7 +16,7 @@ function add_pose_data (clip)
   if not has_array(clip, 'points_2d') then
     print('Processing clip ' .. clip['id'])
 
-    images = image_names(clip['id'], clip['start_frame'], clip['end_frame'])
+    images = image_names(clip['id'], clip['start'], clip['end'])
     clip['points_2d'] = predict_poses(clip, images)
   end
 
@@ -67,9 +67,11 @@ end
 
 function image_names (id, start_frame, end_frame)
   local images = {}
+  start_frame = math.floor(start_frame)
+  end_frame = math.floor(end_frame)
 
   for j = 1, (end_frame - start_frame) do
-    images[j] = image_root .. id .. '-' .. tostring(j + start_frame) .. image_extension
+    images[j] = image_root .. id .. '-' .. tostring(j) .. image_extension
   end
 
   return images
